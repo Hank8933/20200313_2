@@ -4,7 +4,6 @@
 int howManyDigit(char *array)
 {
     int n=0;
-    //printf("s:%s\n",array);
     for (int i=0;!((*(array+i) == ' ')||(*(array+i) == '\0'));i++) n++;
     return n;
 }
@@ -16,33 +15,12 @@ int calculate(char a, int b, int c)
     else return b * c;
 }
 
-int charToInt(char *c, int digit)
-{
-    int a = (int)*c-48;
-    int b = (int)*(c+1)-48;
-    int d = (int)*(c+2)-48;
-    switch (digit)
-    {
-    case 1:
-        return a;
-    case 2:
-        return a*10 + b;
-    case 3:
-        return a*100 + b*10 + d;
-    case 4:
-        return a*1000 + b*100 + d*10 + (int)*(c+3)-48;
-    }
-}
-
 int computePrefix(char *array)
 {
-    //printf("run\n");
-    //printf("%s\n",array);
     int a = howManyDigit((array+2));
     int b = howManyDigit((array+3+a));
-
-    if (*(array+3+a+b) == '\0') return calculate(*array, charToInt(array+2,a), charToInt(array+3+a,b));  //遞迴終點
-    return calculate(*(array), charToInt(array+2,a), computePrefix(array+3+a));
+    if (*(array+3+a+b) == '\0') return calculate(*array, atoi(array+2), atoi(array+3));  //遞迴終點
+    return calculate(*(array), atoi(array+2), computePrefix(array+3+a));
 }
 
 int main()
