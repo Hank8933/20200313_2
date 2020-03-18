@@ -1,26 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int howManyDigit(char *array)
+int computePrefix(char *input, int left)
 {
-    int n=0;
-    for (int i=0;!((*(array+i) == ' ')||(*(array+i) == '\0'));i++) n++;
-    return n;
-}
+    int i = 0, flag = 0, front, behind;
+    int operatorSum = 0; // !(0 - 9)
+    int operandSum = 0;  // 0 - 9
 
-int calculate(char a, int b, int c)
-{
-    printf("calculate: %c %d %d\n",a,b,c);
-    if (a == '+') return b + c;
-    else return b * c;
-}
+    //printf("%d %s\n\n", left, input+left);
 
-int computePrefix(char *array)
-{
-    int a = howManyDigit((array+2));
-    int b = howManyDigit((array+3+a));
-    if (*(array+3+a+b) == '\0') return calculate(*array, atoi(array+2), atoi(array+3));  //遞迴終點
-    return calculate(*(array), atoi(array+2), computePrefix(array+3+a));
+    if(input[left] >= 48 && input[left] <= 57) return atoi(input + left);  //遞迴結束，回傳數字
+
+    else
+    {
+        for(i = left; ; i++)  //i = 字串尾
+        {
+            if(input[i] >= 48 && input[i] <= 57)
+            {
+                if(flag == 0)
+                    operandSum++;
+                flag = 1;
+            }
+            else if(input[i] == ' ') flag = 0;
+            else operatorSum++;
+
+            if(operandSum == operatorSum && flag == 0)
+                break;
+        }
+
+        front = computePrefix(input, left + 2);
+        behind = computePrefix(input, i + 1);
+
+        if(input[left] == '+') return front + behind;  //遞迴結束，回傳運算結果
+        if(input[left] == '*') return front * behind;
+    }
 }
 
 int main()
@@ -29,14 +42,17 @@ int main()
     printf("輸入陣列長度: ");
     scanf("%d",&n);
     printf("請輸入陣列: ");
-    char array[n];
+    char array[n+1];
     scanf(" %[0-9+* ]",array);
     //char array[]= {"+ 31 * 2 + 750 + 99 + 1 1234"};
+    //char array[]= {"+ + 2120 * 3 5 50"};
     //n = 28;
+    //n = 17;
     array[n] = '\0';
 
     printf("輸入了: %s\n",array);
-    printf("答案為: %d\n",computePrefix(array));
+
+    printf("答案為: %d\n",computePrefix(array, 0));
     system("pause");
     return 0;
 }
